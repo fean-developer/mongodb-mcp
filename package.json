@@ -1,0 +1,48 @@
+{
+  "name": "mongodb-readonly-mcp",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "mongodb-readonly-mcp": "dist/main.js",
+    "mongodb-readonly-mcp-configure": "dist/interfaces/cli/configure.js"
+  },
+  "files": [
+    "dist",
+    "assets/icon-64.png",
+    "assets/icon-128.png",
+    "docs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
+    "lint": "eslint .",
+    "pretest": "npm run build",
+    "test": "tsx --test test/*.test.ts",
+    "pretest:integration": "npm run build",
+    "test:integration": "tsx --test test/integration/*.test.ts",
+    "start": "node  dist/main.js",
+    "configure": "node dist/interfaces/cli/configure.js",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "mongodb": "^7.9.1",
+    "mongodb-connection-string-url": "^7.0.3",
+    "openid-client": "^6.9.0",
+    "open": "^10.1.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.10.0",
+    "eslint": "^10.15.0",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.73.0"
+  }
+}
