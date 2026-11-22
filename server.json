@@ -1,0 +1,44 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.fean-developer/mongodb-readonly-mcp",
+  "title": "MongoDB Read-Only MCP",
+  "description": "Read-only MongoDB queries with database, collection and field policies.",
+  "websiteUrl": "https://github.com/fean-developer/mongodb-mcp",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/fean-developer/mongodb-mcp/main/assets/icon-128.png",
+      "mimeType": "image/png",
+      "sizes": ["128x128"]
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/fean-developer/mongodb-mcp",
+    "source": "github"
+  },
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@fean-developer/mongodb-readonly-mcp",
+      "version": "2.0.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "MONGODB_MCP_PROFILE",
+          "description": "Optional profile previously saved with mongodb-readonly-mcp-configure.",
+          "isRequired": false
+        },
+        {
+          "name": "MONGODB_URI",
+          "description": "MongoDB URI, if not using a saved private configuration; may contain credentials.",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

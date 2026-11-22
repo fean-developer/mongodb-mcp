@@ -1,7 +1,24 @@
 {
-  "name": "mongodb-readonly-mcp",
+  "name": "@fean-developer/mongodb-readonly-mcp",
   "version": "2.0.0",
-  "private": true,
+  "description": "Servidor MCP para consultas somente leitura ao MongoDB.",
+  "mcpName": "io.github.fean-developer/mongodb-readonly-mcp",
+  "license": "MIT",
+  "author": "fean-developer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fean-developer/mongodb-mcp.git"
+  },
+  "homepage": "https://github.com/fean-developer/mongodb-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/fean-developer/mongodb-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mongodb",
+    "read-only"
+  ],
   "type": "module",
   "bin": {
     "mongodb-readonly-mcp": "dist/main.js",
@@ -12,8 +29,13 @@
     "assets/icon-64.png",
     "assets/icon-128.png",
     "docs",
-    "README.md"
+    "README.md",
+    "server.json"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "engines": {
     "node": ">=20.19.0"
   },
@@ -27,7 +49,8 @@
     "test:integration": "tsx --test test/integration/*.test.ts",
     "start": "node  dist/main.js",
     "configure": "node dist/interfaces/cli/configure.js",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run typecheck && npm run lint && npm test"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",

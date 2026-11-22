@@ -302,30 +302,71 @@ O pacote expõe dois comandos: `mongodb-readonly-mcp`, o servidor MCP stdio, e `
 ```sh
 npm ci
 npm test
-npm version patch   # opcional: incrementa a versão antes de distribuir
 npm pack
 ```
 
-`npm pack` compila o projeto e gera `mongodb-readonly-mcp-<versão>.tgz`. O pacote contém somente `dist/`, `docs/`, os ícones `assets/icon-64.png` e `assets/icon-128.png`, `README.md` e `package.json`; código-fonte, testes, `.env` e configurações privadas não são incluídos. Confira o conteúdo com `tar -tzf mongodb-readonly-mcp-*.tgz`.
+`npm pack` compila o projeto e gera `fean-developer-mongodb-readonly-mcp-<versão>.tgz`. O pacote contém `dist/`, `docs/`, os ícones, `README.md`, `LICENSE`, `server.json` e `package.json`; código-fonte, testes, `.env` e configurações privadas não são incluídos. Confira o conteúdo com `tar -tzf fean-developer-mongodb-readonly-mcp-2.0.0.tgz`.
 
 Formas de distribuição:
 
 | Canal | Como publicar | Como o usuário instala |
 |---|---|---|
-| Arquivo `.tgz` (release interna, artefato de CI, compartilhamento) | Anexe o `.tgz` gerado. | `npm install -g ./mongodb-readonly-mcp-2.0.0.tgz` ou a URL HTTPS do arquivo. |
-| Repositório Git | Publique uma tag, por exemplo `v2.0.0`. | `npm install -g git+https://github.com/<org>/<repo>.git#v2.0.0`; o npm instala as dependências de desenvolvimento e compila via `prepare`. |
-| Registro npm privado | Remova `"private": true`, use um nome com escopo (por exemplo `@org/mongodb-readonly-mcp`), configure `publishConfig.registry` e execute `npm publish`. | `npm install -g @org/mongodb-readonly-mcp` |
+| Arquivo `.tgz` (release interna, artefato de CI, compartilhamento) | Anexe o `.tgz` gerado. | `npm install -g ./fean-developer-mongodb-readonly-mcp-2.0.0.tgz` ou a URL HTTPS do arquivo. |
+| Repositório Git | Publique uma tag, por exemplo `v2.0.0`. | `npm install -g git+https://github.com/fean-developer/mongodb-mcp.git#v2.0.0`; o npm instala as dependências de desenvolvimento e compila via `prepare`. |
+| Registro npm público | Siga [Publicar no npm e no Registro MCP](#publicar-no-npm-e-no-registro-mcp). | Após a publicação, `npm install -g @fean-developer/mongodb-readonly-mcp`. |
 
-`"private": true` impede uma publicação acidental no registro público; mantenha-o se a distribuição for por `.tgz` ou Git.
+### Publicar no npm e no Registro MCP
+
+Os comandos de publicação abaixo só devem ser executados quando você decidir disponibilizar o pacote publicamente. O Registro MCP guarda metadados; o pacote precisa ser publicado no npm **primeiro**.
+
+1. Confirme que as alterações e os tutoriais estão no repositório público. Para mudar de versão, atualize `package.json` e `package-lock.json` (por exemplo, com `npm version <versão> --no-git-tag-version`), os dois campos `version` de `server.json` e `serverVersion` em `src/interfaces/mcp/branding.ts`. O teste de publicação verifica a consistência.
+2. Autentique-se no npm como `fean-developer`, com 2FA configurada, e instale o [`mcp-publisher`](https://modelcontextprotocol.io/registry/quickstart#step-3-install-mcp-publisher).
+3. Na raiz do projeto, valide antes de publicar:
+
+   ```sh
+   npm ci
+   npm run typecheck
+   npm run lint
+   npm test
+   npm run test:integration  # requer Docker
+   npm pack --dry-run
+   mcp-publisher validate server.json
+   npm whoami
+   ```
+
+4. Quando a publicação estiver autorizada, publique o pacote e confirme a versão e o `mcpName`:
+
+   ```sh
+   npm publish --access public
+   npm view @fean-developer/mongodb-readonly-mcp@2.0.0 version mcpName
+   ```
+
+   Substitua `2.0.0` pela versão preparada, se necessário. O npm não permite reutilizar a mesma combinação de nome e versão.
+
+5. Autentique-se no Registro MCP com a conta GitHub `fean-developer` e publique o manifesto:
+
+   ```sh
+   mcp-publisher login github
+   mcp-publisher publish
+   ```
+
+   Confira o resultado na [API do Registro MCP](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.fean-developer%2Fmongodb-readonly-mcp). O `name` em `server.json` deve ser idêntico ao `mcpName` do pacote publicado.
+
+O manifesto declara `MONGODB_URI` como segredo opcional, pois a conexão também pode vir da configuração privada. Prefira o configurador; não grave URI ou senha em configurações versionadas nem as compartilhe no chat. Com `MONGODB_MCP_PROFILE`, o servidor usa somente o perfil escolhido, ignorando outras variáveis de conexão herdadas.
+
+Após a publicação, quem usar o servidor pelo Registro MCP pode executar o configurador sem instalação global:
+
+```sh
+npx --yes --package=@fean-developer/mongodb-readonly-mcp mongodb-readonly-mcp-configure
+```
 
 ### 2. Instalar (usuário)
 
 Instale no **mesmo ambiente em que o cliente MCP executa o servidor**: no WSL, instale dentro do WSL; em SSH ou container, no host remoto.
 
-```sh
-npm install -g ./mongodb-readonly-mcp-2.0.0.tgz
-command -v mongodb-readonly-mcp mongodb-readonly-mcp-configure
-```
+Se já houver uma instalação antiga do pacote sem escopo, remova-a primeiro com `npm uninstall -g mongodb-readonly-mcp` para evitar conflito entre os comandos. A configuração privada e os segredos são preservados.
+
+Após a publicação no npm, instale com `npm install -g @fean-developer/mongodb-readonly-mcp`. Antes dela, use `npm install -g ./fean-developer-mongodb-readonly-mcp-2.0.0.tgz`. Confira os comandos com `command -v mongodb-readonly-mcp mongodb-readonly-mcp-configure`.
 
 Se `npm install -g` exigir `sudo`, configure um prefixo npm do usuário (`npm config set prefix ~/.local`, com `~/.local/bin` no `PATH`) ou use nvm, em vez de instalar como root. Com nvm, os comandos globais pertencem à versão ativa do Node.
 
@@ -370,7 +411,7 @@ Se o cliente não encontrar o comando, o `PATH` do cliente difere do terminal, o
     "mongodb-readonly": {
       "type": "stdio",
       "command": "/caminho/absoluto/bin/node",
-      "args": ["/caminho/absoluto/lib/node_modules/mongodb-readonly-mcp/dist/main.js"]
+      "args": ["/caminho/absoluto/lib/node_modules/@fean-developer/mongodb-readonly-mcp/dist/main.js"]
     }
   }
 }
@@ -381,8 +422,8 @@ Dentro deste repositório, `.mcp.json` e `.vscode/mcp.json` também registram `m
 ### 5. Atualizar e desinstalar
 
 ```sh
-npm install -g ./mongodb-readonly-mcp-2.1.0.tgz   # atualizar
-npm uninstall -g mongodb-readonly-mcp             # desinstalar
+npm install -g @fean-developer/mongodb-readonly-mcp@latest   # atualizar após a publicação
+npm uninstall -g @fean-developer/mongodb-readonly-mcp        # desinstalar
 copilot mcp remove mongodb-readonly
 ```
 

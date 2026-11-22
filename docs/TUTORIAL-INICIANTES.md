@@ -36,18 +36,33 @@ Este guia mostra, **na ordem em que você executa**, como instalar, configurar e
 
 ## Passo 2 — Obter o pacote
 
-Você recebe um arquivo como `mongodb-readonly-mcp-2.0.0.tgz` de quem mantém o projeto. Se for você quem gera o pacote, na pasta do repositório:
+Após a publicação, o pacote estará disponível no npm como `@fean-developer/mongodb-readonly-mcp`. Antes disso, você pode usar um arquivo `.tgz` fornecido por quem mantém o projeto ou gerá-lo na pasta do repositório:
 
 ```sh
 npm ci      # instala dependências e compila
 npm test    # opcional: roda os testes
-npm pack    # gera mongodb-readonly-mcp-2.0.0.tgz
+npm pack    # gera fean-developer-mongodb-readonly-mcp-2.0.0.tgz
 ```
 
 ## Passo 3 — Instalar globalmente
 
+Se você instalou anteriormente o pacote sem escopo, remova-o primeiro com `npm uninstall -g mongodb-readonly-mcp` para evitar conflito entre os comandos. A configuração privada e os segredos são preservados.
+
+Após a publicação no npm:
+
 ```sh
-npm install -g ./mongodb-readonly-mcp-2.0.0.tgz
+npm install -g @fean-developer/mongodb-readonly-mcp
+```
+
+Ou, para instalar o arquivo gerado localmente:
+
+```sh
+npm install -g ./fean-developer-mongodb-readonly-mcp-2.0.0.tgz
+```
+
+Confira os comandos instalados:
+
+```sh
 command -v mongodb-readonly-mcp mongodb-readonly-mcp-configure
 ```
 
@@ -217,14 +232,14 @@ copilot mcp add mongodb-loja --env MONGODB_MCP_PROFILE=loja -- mongodb-readonly-
 ## Passo 10 — Atualizar e desinstalar
 
 ```sh
-# Atualizar
-npm install -g ./mongodb-readonly-mcp-2.1.0.tgz
+# Atualizar após a publicação no npm
+npm install -g @fean-developer/mongodb-readonly-mcp@latest
 # Em seguida, reinicie o servidor no VS Code (Restart Server) ou recarregue a janela.
 
 # Desinstalar (apague as configurações antes, se não for mais usá-las)
 mongodb-readonly-mcp-configure --reset
 mongodb-readonly-mcp-configure --reset --profile loja
-npm uninstall -g mongodb-readonly-mcp
+npm uninstall -g @fean-developer/mongodb-readonly-mcp
 copilot mcp remove mongodb-readonly
 ```
 
